@@ -101,6 +101,44 @@
   }
 
   // ---------------------------------------------------------------------------
+  // Icons (48×48 line drawings, stroke = currentColor)
+  // ---------------------------------------------------------------------------
+
+  const ICONS = {
+    // Load types
+    boxes: "M8 24h16v16H8zM24 24h16v16H24zM14 8h20v16H14zM16 24v5M32 24v5M24 8v5",
+    rolls: "M14 12h22M14 36h22M36 12a6 12 0 0 1 0 24M14 12a6 12 0 1 0 0 24a6 12 0 1 0 0-24zM14 21a1.6 3 0 1 0 0 6a1.6 3 0 1 0 0-6z",
+    panels: "M8 38l8-28h5l-8 28zM19 38l8-28h5l-8 28zM30 38l8-28h4l-8 28z",
+    servers: "M11 7h26v34H11zM11 18h26M11 29h26M16 12.5h8M16 23.5h8M16 34.5h8M31 12.5h1M31 23.5h1M31 34.5h1",
+    drums: "M12 12a12 4 0 1 0 24 0a12 4 0 1 0-24 0M12 12v24a12 4 0 0 0 24 0V12M12 20a12 4 0 0 0 24 0M12 28a12 4 0 0 0 24 0",
+    parts: "M24 6l15.6 9v18L24 42 8.4 33V15zM24 17a7 7 0 1 0 0 14a7 7 0 1 0 0-14z",
+    other: "M24 7a17 17 0 1 0 0 34a17 17 0 1 0 0-34zM19 19a5 5 0 1 1 7 4.6c-1.3.6-2 1.6-2 3V28M24 33v.5",
+    // Products
+    "vacuum-tube-lifter": "M6 6h36M24 6v4M20 10h8v18h-8zM20 14h8M20 18h8M20 22h8M28 22h7M12 30h24v3H12zM10 33h28v9H10z",
+    "lifting-trolley": "M14 6v34M8 40h32M10 43a2 2 0 1 0 0 .1M36 43a2 2 0 1 0 0 .1M14 18h20v4H14zM20 22v4h12v-4M10 6h8",
+    "server-lifter": "M14 6v34M8 40h32M10 43a2 2 0 1 0 0 .1M36 43a2 2 0 1 0 0 .1M14 22h22v3H14zM18 12h16v10H18zM18 17h16M10 6h8",
+    "jib-crane": "M12 8v34M6 42h14M12 10h30M12 18l10-8M34 10v18M34 28v3a4 4 0 1 1-4 4",
+    "overhead-crane": "M6 10h36M9 10v32M39 10v32M5 42h8M35 42h8M20 7h8v6h-8zM24 13v15M24 28v3a4 4 0 1 1-4 4",
+    hoist: "M18 4h12v4H18zM16 8h16v12H16zM20 12h8M24 20v10M24 30v3a4 4 0 1 1-4 4",
+    manipulator: "M8 42h14M15 42V26M15 26l14-10M29 16l7 12M15 26a2.5 2.5 0 1 0 0 .1M29 16a2.5 2.5 0 1 0 0 .1M32 32h8M32 32v5M40 32v5",
+    "lifting-table": "M7 12h34v4H7zM7 38h34v4H7zM12 16l24 22M36 16L12 38M24 27a1.5 1.5 0 1 0 0 .1",
+    "goods-lift": "M10 6h28v36H10zM10 30h28M18 22l6-6 6 6M18 36l6 4 6-4",
+  };
+
+  function icon(name, cls) {
+    if (!name || !ICONS[name]) return null;
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 48 48");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("class", "pa-icon " + (cls || ""));
+    const path = document.createElementNS(ns, "path");
+    path.setAttribute("d", ICONS[name]);
+    svg.appendChild(path);
+    return svg;
+  }
+
+  // ---------------------------------------------------------------------------
   // UI
   // ---------------------------------------------------------------------------
 
@@ -118,19 +156,26 @@
     return node;
   }
 
-  function contactHref(config, answers) {
+  function contactHref(config, answers, product) {
     const summary = summarizeAnswers(answers, config).join("\n");
     const contact = config.contact || {};
+    const subject = product ? "Question about " + product.name : "Help choosing a lifting solution";
     if (contact.email) {
       return (
         "mailto:" + contact.email +
-        "?subject=" + encodeURIComponent("Help choosing a lifting solution") +
+        "?subject=" + encodeURIComponent(subject) +
         "&body=" + encodeURIComponent("Hi,\n\nI used the lifting advisor on your website. My answers:\n\n" + summary + "\n\n")
       );
     }
     const url = new URL(contact.url || "#", root.location.href);
     url.searchParams.set("advisor", summary);
+    if (product) url.searchParams.set("product", product.id);
     return url.toString();
+  }
+
+  function fitLabel(score, topScore, index) {
+    if (index === 0) return "Best match";
+    return score >= topScore * 0.6 ? "Good fit" : "Also possible";
   }
 
   function mount(target, config) {
@@ -140,6 +185,7 @@
 
     const state = { step: 0, answers: {} };
     const questions = config.questions;
+    const total = questions.length;
 
     function emit(name, detail) {
       host.dispatchEvent(new CustomEvent("advisor:" + name, { detail, bubbles: true }));
@@ -149,6 +195,12 @@
 
     function canContinue(q) {
       return answerValues(state.answers, q.id).length > 0;
+    }
+
+    function goTo(step) {
+      state.step = step;
+      if (step === total) emit("complete", { answers: state.answers });
+      render(true);
     }
 
     function select(q, opt) {
@@ -165,38 +217,79 @@
       } else {
         state.answers[q.id] = opt.value;
         // Single choice: advance automatically for a snappy flow
-        next();
+        goTo(nextStep());
       }
     }
 
-    function next() {
-      if (state.step < questions.length) state.step++;
-      if (state.step === questions.length) emit("complete", { answers: state.answers });
-      render(true);
-    }
-
-    function back() {
-      if (state.step > 0) state.step--;
-      render(true);
+    // When editing an earlier answer, jump back to the first unanswered question
+    function nextStep() {
+      for (let i = state.step + 1; i < total; i++) {
+        if (!canContinue(questions[i])) return i;
+      }
+      return total;
     }
 
     function restart() {
-      state.step = 0;
       state.answers = {};
       emit("restart", {});
-      render(true);
+      goTo(0);
+    }
+
+    function renderHeader(done) {
+      return el("header", { class: "pa-head" }, [
+        el("div", { class: "pa-head-row" }, [
+          el("p", { class: "pa-eyebrow" }, config.title || "Lifting Advisor"),
+          el("p", { class: "pa-step", "aria-live": "polite" },
+            done ? "Your recommendation" : `Step ${state.step + 1} of ${total}`),
+        ]),
+        el("ol", { class: "pa-segments", "aria-hidden": "true" },
+          questions.map((q, i) =>
+            el("li", { class: "pa-seg" + (canContinue(q) ? " is-done" : "") + (i === state.step ? " is-current" : "") })
+          )
+        ),
+      ]);
+    }
+
+    function renderSummary(done) {
+      return el("aside", { class: "pa-summary" + (done ? " is-final" : ""), "aria-label": "Your answers" }, [
+        el("p", { class: "pa-summary-title" }, "Your lift"),
+        el("dl", { class: "pa-summary-list" },
+          questions.map((q, i) => {
+            const vals = answerValues(state.answers, q.id);
+            const labels = vals.map((v) => (findOption(config, q.id, v) || {}).label || v);
+            const answered = vals.length > 0;
+            const row = el("div", { class: "pa-summary-row" + (i === state.step && !done ? " is-current" : "") }, [
+              el("dt", null, q.short || q.title),
+              el("dd", null, answered ? labels.join(", ") : "–"),
+            ]);
+            return answered
+              ? el("button", { type: "button", class: "pa-summary-btn", title: "Change this answer", onclick: () => goTo(i) }, row)
+              : row;
+          })
+        ),
+        done ? el("button", { type: "button", class: "pa-link", onclick: restart }, "Start over") : null,
+      ]);
     }
 
     function renderQuestion(q) {
       const selected = answerValues(state.answers, q.id);
       const isMulti = q.type === "multi";
-      return el("div", { class: "pa-question" }, [
+      const isScale = q.options.every((o) => o.kg);
+      const hasIcons = q.options.some((o) => o.icon);
+      const last = state.step === total - 1;
+
+      return el("section", { class: "pa-main pa-enter" }, [
+        el("p", { class: "pa-qnum", "aria-hidden": "true" }, String(state.step + 1).padStart(2, "0")),
         el("h2", { class: "pa-title", tabindex: "-1" }, q.title),
         q.help ? el("p", { class: "pa-help" }, q.help) : null,
         el(
           "div",
-          { class: "pa-options", role: isMulti ? "group" : "radiogroup", "aria-label": q.title },
-          q.options.map((o) =>
+          {
+            class: "pa-options" + (isScale ? " pa-options--scale" : hasIcons ? " pa-options--tiles" : ""),
+            role: isMulti ? "group" : "radiogroup",
+            "aria-label": q.title,
+          },
+          q.options.map((o, i) =>
             el(
               "button",
               {
@@ -207,7 +300,11 @@
                 onclick: () => select(q, o),
               },
               [
-                o.icon ? el("span", { class: "pa-option-icon", "aria-hidden": "true" }, o.icon) : null,
+                isScale
+                  ? el("span", { class: "pa-scale-bar", "aria-hidden": "true", style: `--h:${(i + 1) / q.options.length}` })
+                  : null,
+                hasIcons ? icon(o.icon, "pa-option-icon") : null,
+                isMulti ? el("span", { class: "pa-check", "aria-hidden": "true" }) : null,
                 el("span", { class: "pa-option-text" }, [
                   el("span", { class: "pa-option-label" }, o.label),
                   o.hint ? el("span", { class: "pa-option-hint" }, o.hint) : null,
@@ -216,90 +313,121 @@
             )
           )
         ),
+        el("div", { class: "pa-nav" }, [
+          state.step > 0
+            ? el("button", { type: "button", class: "pa-link", onclick: () => goTo(state.step - 1) }, "← Back")
+            : el("span"),
+          isMulti || canContinue(q)
+            ? el("button", {
+                type: "button", class: "pa-btn pa-btn-primary", disabled: !canContinue(q),
+                onclick: () => goTo(isMulti ? Math.max(nextStep(), state.step + 1) : nextStep()),
+              }, last ? "Show my recommendation" : "Next")
+            : null,
+        ]),
+      ]);
+    }
+
+    function specChips(p) {
+      const chips = [];
+      if (p.capacityKg) chips.push(`Up to ${p.capacityKg[1].toLocaleString("en")} kg`);
+      if (p.mobility) chips.push(p.mobility);
+      return el("ul", { class: "pa-specs" }, chips.map((c) => el("li", null, c)));
+    }
+
+    function productLink(r, i, cls, text) {
+      return el("a", {
+        class: cls, href: r.product.url,
+        onclick: () => emit("product_click", { product: r.product.id, rank: i + 1 }),
+      }, text);
+    }
+
+    function renderBest(r) {
+      return el("article", { class: "pa-best" }, [
+        el("div", { class: "pa-best-visual" }, [
+          r.product.image ? el("img", { src: r.product.image, alt: "" }) : icon(r.product.icon, "pa-best-icon"),
+        ]),
+        el("div", { class: "pa-best-body" }, [
+          el("p", { class: "pa-fit pa-fit--best" }, "Best match"),
+          el("h3", { class: "pa-best-name" }, r.product.name),
+          el("p", { class: "pa-family" }, r.product.family),
+          el("p", { class: "pa-summary-text" }, r.product.summary),
+          specChips(r.product),
+          r.reasons.length
+            ? el("ul", { class: "pa-reasons" }, r.reasons.slice(0, 3).map((t) => el("li", null, t)))
+            : null,
+          r.warnings.map((w) => el("p", { class: "pa-warning" }, w)),
+          el("div", { class: "pa-actions" }, [
+            productLink(r, 0, "pa-btn pa-btn-primary", "View product"),
+            el("a", {
+              class: "pa-btn pa-btn-secondary",
+              href: contactHref(config, state.answers, r.product),
+              onclick: () => emit("contact_click", { product: r.product.id }),
+            }, "Ask about this product"),
+          ]),
+        ]),
+      ]);
+    }
+
+    function renderAlt(r, i, topScore) {
+      return el("article", { class: "pa-alt" }, [
+        el("div", { class: "pa-alt-head" }, [
+          el("span", { class: "pa-alt-visual" }, icon(r.product.icon, "pa-alt-icon")),
+          el("div", null, [
+            el("p", { class: "pa-fit" }, fitLabel(r.score, topScore, i)),
+            el("h4", { class: "pa-alt-name" }, r.product.name),
+          ]),
+        ]),
+        el("p", { class: "pa-summary-text" }, r.product.summary),
+        specChips(r.product),
+        r.reasons[0] ? el("ul", { class: "pa-reasons" }, el("li", null, r.reasons[0])) : null,
+        r.warnings.map((w) => el("p", { class: "pa-warning" }, w)),
+        productLink(r, i, "pa-arrow-link", "View product →"),
       ]);
     }
 
     function renderResults() {
       const { results, notes } = recommend(state.answers, config);
       emit("results", { products: results.map((r) => r.product.id) });
+      const topScore = results.length ? results[0].score : 0;
 
-      const cards = results.length
-        ? results.map((r, i) =>
-            el("article", { class: "pa-card" + (i === 0 ? " is-best" : "") }, [
-              i === 0 ? el("span", { class: "pa-badge" }, "Best match") : null,
-              r.product.image ? el("img", { class: "pa-card-img", src: r.product.image, alt: "" }) : null,
-              el("p", { class: "pa-card-family" }, r.product.family),
-              el("h3", { class: "pa-card-name" }, r.product.name),
-              el("p", { class: "pa-card-summary" }, r.product.summary),
-              r.reasons.length
-                ? el("ul", { class: "pa-reasons" }, r.reasons.slice(0, 3).map((t) => el("li", null, t)))
-                : null,
-              r.warnings.map((w) => el("p", { class: "pa-warning" }, w)),
-              el(
-                "a",
-                {
-                  class: "pa-btn " + (i === 0 ? "pa-btn-primary" : "pa-btn-secondary"),
-                  href: r.product.url,
-                  onclick: () => emit("product_click", { product: r.product.id, rank: i + 1 }),
-                },
-                "View product"
-              ),
+      return el("section", { class: "pa-main pa-enter" }, [
+        el("h2", { class: "pa-title", tabindex: "-1" },
+          results.length ? "Recommended for your lift" : "Your lift needs a custom solution"),
+        el("p", { class: "pa-help" },
+          results.length
+            ? "Based on your answers. Click any of your answers to change it."
+            : "None of our standard products matched all your answers. Our application experts design custom lifting solutions every day."),
+        results.length ? renderBest(results[0]) : null,
+        results.length > 1
+          ? el("div", { class: "pa-alts" }, [
+              el("h3", { class: "pa-alts-title" }, "Also worth considering"),
+              el("div", { class: "pa-alts-grid" }, results.slice(1).map((r, i) => renderAlt(r, i + 1, topScore))),
             ])
-          )
-        : [
-            el("div", { class: "pa-empty" }, [
-              el("h3", null, "This sounds like a job for a custom solution"),
-              el("p", null, "None of our standard products matched all your answers. Our application experts design custom lifting solutions every day. Get in touch and we'll help."),
-            ]),
-          ];
-
-      return el("div", { class: "pa-results" }, [
-        el("h2", { class: "pa-title", tabindex: "-1" }, "Our recommendation"),
-        el("p", { class: "pa-help" }, "Based on your answers, these lifting solutions fit your needs best."),
-        el("div", { class: "pa-cards" }, cards),
+          : null,
         notes.length ? el("div", { class: "pa-notes" }, notes.map((n) => el("p", null, n))) : null,
         el("div", { class: "pa-cta" }, [
-          el("div", null, [
-            el("h3", null, "Want a second opinion?"),
-            el("p", null, "Our experts can confirm the right model and configuration for your application."),
+          el("div", { class: "pa-cta-text" }, [
+            el("h3", null, "Not sure yet?"),
+            el("p", null, "Send us your answers and an application expert will confirm the right model and configuration."),
           ]),
-          el(
-            "a",
-            {
-              class: "pa-btn pa-btn-primary",
-              href: contactHref(config, state.answers),
-              onclick: () => emit("contact_click", {}),
-            },
-            "Talk to an expert"
-          ),
+          el("a", {
+            class: "pa-btn pa-btn-accent",
+            href: contactHref(config, state.answers),
+            onclick: () => emit("contact_click", {}),
+          }, "Talk to an expert"),
         ]),
-        el("button", { type: "button", class: "pa-link", onclick: restart }, "↺ Start over"),
       ]);
     }
 
     function render(focus) {
-      const done = state.step >= questions.length;
-      const q = questions[state.step];
-      const pct = Math.round((Math.min(state.step, questions.length) / questions.length) * 100);
-
+      const done = state.step >= total;
       host.replaceChildren(
-        el("div", { class: "pronomic-advisor" }, [
-          el("div", { class: "pa-progress", "aria-hidden": "true" }, el("div", { class: "pa-progress-bar", style: `width:${pct}%` })),
-          el(
-            "p",
-            { class: "pa-step", "aria-live": "polite" },
-            done ? "Your results" : `Question ${state.step + 1} of ${questions.length}`
-          ),
-          done ? renderResults() : renderQuestion(q),
-          done
-            ? null
-            : el("div", { class: "pa-nav" }, [
-                state.step > 0 ? el("button", { type: "button", class: "pa-link", onclick: back }, "← Back") : el("span"),
-                q.type === "multi"
-                  ? el("button", { type: "button", class: "pa-btn pa-btn-primary", disabled: !canContinue(q), onclick: next },
-                      state.step === questions.length - 1 ? "Show my results" : "Next")
-                  : null,
-              ]),
+        el("div", { class: "pronomic-advisor" + (done ? " is-done" : "") }, [
+          renderHeader(done),
+          el("div", { class: "pa-body" }, [
+            done ? renderResults() : renderQuestion(questions[state.step]),
+            renderSummary(done),
+          ]),
         ])
       );
 

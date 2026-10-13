@@ -10,7 +10,7 @@ Plain HTML/CSS/JavaScript with no build step and no dependencies, so it can be e
 | --- | --- |
 | `advisor-config.js` | **Questions and product catalogue. Edit this file.** |
 | `advisor.js` | Recommendation engine and UI. |
-| `advisor.css` | Styles. Brand colours are CSS variables at the top. |
+| `advisor.css` | Styles. Brand colours and fonts are CSS variables at the top. |
 | `index.html` | Stand-alone demo page. Open it in a browser. |
 | `advisor.test.js` | Scenario tests: `node product-advisor/advisor.test.js` |
 
@@ -51,7 +51,7 @@ To add a product, copy an existing entry and adjust it. Then run the tests and a
 - [ ] Check the URLs and capacities marked `// verify` in `advisor-config.js` against the live product pages.
 - [ ] Set `contact.url` (contact form) or `contact.email` (opens an email with the answers pre-filled).
 - [ ] Add product images (`image` field).
-- [ ] Match the colours in `advisor.css` to the brand.
+- [ ] Match the colours in `advisor.css` to the brand. The headings use Barlow Condensed (see `index.html` for the font link); set `--pa-font-display` to use the site's own display font instead.
 - [ ] Optional: translate the texts in `advisor-config.js` for the local-language sites.
 
 ## Analytics

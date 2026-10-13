@@ -34,21 +34,23 @@ window.PRONOMIC_ADVISOR_CONFIG = {
   questions: [
     {
       id: "load",
+      short: "Load",
       title: "What do you need to lift?",
       help: "Pick the type of load that best matches your most common lift.",
       type: "single",
       options: [
-        { value: "boxes", label: "Boxes, sacks or cartons", icon: "📦" },
-        { value: "rolls", label: "Rolls or reels", icon: "🧻" },
-        { value: "panels", label: "Panels, sheets or glass", icon: "🪟" },
-        { value: "servers", label: "Servers, batteries or IT equipment", icon: "🖥️" },
-        { value: "drums", label: "Drums, barrels or kegs", icon: "🛢️" },
-        { value: "parts", label: "Machine parts, tools or components", icon: "⚙️" },
-        { value: "other", label: "Something else", icon: "❔" },
+        { value: "boxes", label: "Boxes, sacks or cartons", icon: "boxes" },
+        { value: "rolls", label: "Rolls or reels", icon: "rolls" },
+        { value: "panels", label: "Panels, sheets or glass", icon: "panels" },
+        { value: "servers", label: "Servers, batteries or IT equipment", icon: "servers" },
+        { value: "drums", label: "Drums, barrels or kegs", icon: "drums" },
+        { value: "parts", label: "Machine parts, tools or components", icon: "parts" },
+        { value: "other", label: "Something else", icon: "other" },
       ],
     },
     {
       id: "weight",
+      short: "Weight",
       title: "How heavy is the heaviest load?",
       help: "Include any packaging or pallet the load sits on.",
       type: "single",
@@ -63,6 +65,7 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "surface",
+      short: "Surface",
       title: "What is the surface of the load like?",
       help: "This tells us how the load can be gripped.",
       type: "single",
@@ -75,6 +78,7 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "movement",
+      short: "Movement",
       title: "Where does the load need to go?",
       type: "single",
       options: [
@@ -86,6 +90,7 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "height",
+      short: "Lift height",
       title: "How high does the load need to be lifted?",
       type: "single",
       options: [
@@ -96,6 +101,7 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "frequency",
+      short: "Frequency",
       title: "How often is the lift done?",
       type: "single",
       options: [
@@ -106,6 +112,7 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "orientation",
+      short: "Turning",
       title: "Does the load need to be turned or tilted?",
       type: "single",
       options: [
@@ -115,6 +122,7 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "environment",
+      short: "Environment",
       title: "Anything special about the environment?",
       help: "Select all that apply.",
       type: "multi",
@@ -131,6 +139,8 @@ window.PRONOMIC_ADVISOR_CONFIG = {
   products: [
     {
       id: "vacuum-tube-lifter",
+      icon: "vacuum-tube-lifter",
+      mobility: "Fixed workstation",
       name: "Vacuum tube lifter",
       family: "Vacuhand / Easyhand",
       url: "https://www.pronomic.com/products/vacuum-and-tube-lifts", // verify
@@ -158,6 +168,8 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "lifting-trolley",
+      icon: "lifting-trolley",
+      mobility: "Mobile",
       name: "Lift&Drive lifting trolley",
       family: "Lift&Drive",
       url: "https://www.pronomic.com/products/lifting-trolleys",
@@ -185,6 +197,8 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "server-lifter",
+      icon: "server-lifter",
+      mobility: "Mobile",
       name: "Server lifter",
       family: "Data centre lifting trolleys",
       url: "https://www.pronomic.com/data-center/products/server-lifters",
@@ -207,6 +221,8 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "jib-crane",
+      icon: "jib-crane",
+      mobility: "Fixed workstation",
       name: "Jib crane with hoist",
       family: "Easycrane / jib cranes",
       url: "https://www.pronomic.com/products/jib-cranes", // verify
@@ -230,6 +246,8 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "overhead-crane",
+      icon: "overhead-crane",
+      mobility: "Covers a hall area",
       name: "Overhead light crane system",
       family: "Rail-mounted crane systems",
       url: "https://www.pronomic.com/products/crane-systems", // verify
@@ -255,6 +273,8 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "hoist",
+      icon: "hoist",
+      mobility: "Mounted on a crane",
       name: "Electric or pneumatic hoist",
       family: "Hoists",
       url: "https://www.pronomic.com/products/hoists", // verify
@@ -278,6 +298,8 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "manipulator",
+      icon: "manipulator",
+      mobility: "Fixed workstation",
       name: "Manipulator with load-specific gripper",
       family: "Manipulators & grippers",
       url: "https://www.pronomic.com/products/manipulators", // verify
@@ -302,6 +324,8 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "lifting-table",
+      icon: "lifting-table",
+      mobility: "Fixed workstation",
       name: "Lifting table",
       family: "Scissor lifting tables",
       url: "https://www.pronomic.com/products/lifting-tables", // verify
@@ -325,6 +349,8 @@ window.PRONOMIC_ADVISOR_CONFIG = {
     },
     {
       id: "goods-lift",
+      icon: "goods-lift",
+      mobility: "Building installation",
       name: "Goods lift / mezzanine lift",
       family: "Elevators",
       url: "https://www.pronomic.com/products/elevators", // verify
