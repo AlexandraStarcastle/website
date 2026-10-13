@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lifting Advisor – Find the right lifting solution | Pronomic</title>
+  <meta name="description" content="Answer a few questions about your lift and get a recommendation from Pronomic's range of lifting solutions.">
+  <link rel="stylesheet" href="advisor.css">
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #fff; }
+    .intro { max-width: 960px; margin: 0 auto; padding: 32px 16px 0; }
+    .intro h1 { margin: 0 0 8px; color: #0b3d5c; }
+    .intro p { margin: 0; color: #5b6876; }
+  </style>
+</head>
+<body>
+  <header class="intro">
+    <h1>Find the right lifting solution</h1>
+    <p>Answer 8 quick questions and we'll recommend the lifting aids that fit your needs.</p>
+  </header>
+
+  <div id="pronomic-advisor"></div>
+
+  <script src="advisor-config.js"></script>
+  <script src="advisor.js"></script>
+  <script>PronomicAdvisor.mount("#pronomic-advisor");</script>
+</body>
+</html>
