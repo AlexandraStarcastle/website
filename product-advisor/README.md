@@ -10,7 +10,8 @@ Plain HTML/CSS/JavaScript with no build step and no dependencies, so it can be e
 | --- | --- |
 | `advisor-config.js` | **Questions, solutions, product links and tips. Edit this file.** |
 | `advisor.js` | Recommendation engine and UI. |
-| `advisor.css` | Styles. Brand colours and fonts are CSS variables at the top. |
+| `advisor.css` | Styles. Colours and font follow the Pronomic Visual Guide (CSS variables at the top). |
+| `pronomic-logo.svg` | Logo for the advisor header, from the Visual Guide. Set `logo` in the config to its path on the website. |
 | `index.html` | Stand-alone demo page. Open it in a browser. |
 | `advisor.test.js` | Scenario tests: `node product-advisor/advisor.test.js` |
 
@@ -55,7 +56,7 @@ To add a solution, copy an existing entry and adjust it. Then run the tests and 
 - [ ] Decide on `probldr.deepLink`: when `true`, the ProBldr button opens a new configuration for the suggested trolley model instead of the model selector. Test the link while logged out first.
 - [ ] Set `contact.url` (contact form) or `contact.email` (opens an email with the answers pre-filled).
 - [ ] Add product images (`image` field).
-- [ ] Match the colours in `advisor.css` to the brand. The headings use Barlow Condensed (see `index.html` for the font link); set `--pa-font-display` to use the site's own display font instead.
+- [ ] Load the Ubuntu font on the page if the site doesn't already (see the Google Fonts link in `index.html`).
 - [ ] Optional: translate the texts in `advisor-config.js` for the local-language sites.
 
 ## Analytics

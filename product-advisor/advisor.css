@@ -2,27 +2,30 @@
  * Pronomic Lifting Advisor — styles.
  * Layout: framed panel. Dark header with step segments; question on the left,
  * a running "Your lift" summary on the right (moves below on phones).
- * Change the variables below to match the site's brand.
+ * Colours and font follow the Pronomic Visual Guide; change the variables below if needed.
  */
 .pronomic-advisor {
-  --pa-ink: #10222f;          /* header and CTA band */
+  /* Pronomic Visual Guide (2024-03-25) */
+  --pa-ink: #041a45;          /* Dark Blue: header and CTA band */
   --pa-ink-text: #ffffff;
-  --pa-brand: #0b4a6f;        /* buttons, selected state, headings */
+  --pa-brand: #041a45;        /* Dark Blue: headings, selected state */
   --pa-brand-text: #ffffff;
-  --pa-accent: #f2a20c;       /* safety amber: progress, step numbers, highlights */
-  --pa-accent-text: #1a1204;
-  --pa-text: #14212b;
-  --pa-muted: #5a6b78;
-  --pa-border: #d6dee5;
+  --pa-accent: #3bc14a;       /* Corporate colour (green): buttons, progress, highlights */
+  --pa-accent-text: #041a45;
+  --pa-link: #1244a7;         /* Mid Blue: text links */
+  --pa-focus: #2c95ff;        /* Light Blue: keyboard focus */
+  --pa-text: #041a45;
+  --pa-muted: #435373;        /* Dark Blue 75% */
+  --pa-border: #d3d7df;
   --pa-surface: #ffffff;
-  --pa-surface-alt: #f2f5f7;
-  --pa-tint: #e7f0f6;         /* selected option background */
-  --pa-good: #1e7a4a;
-  --pa-warn-bg: #fdf3e1;
-  --pa-radius: 14px;
-  --pa-radius-sm: 9px;
-  --pa-font: inherit;
-  --pa-font-display: "Barlow Condensed", "Arial Narrow", var(--pa-font), sans-serif;
+  --pa-surface-alt: #f2f3f6;  /* Dark Blue 5% */
+  --pa-tint: #ebf9ed;         /* Corporate green 10%: selected option */
+  --pa-good: #3bc14a;
+  --pa-warn-bg: #eaf4ff;      /* Light Blue 10% */
+  --pa-radius: 12px;
+  --pa-radius-sm: 8px;
+  --pa-font: "Ubuntu", Arial, sans-serif;
+  --pa-font-display: var(--pa-font);
 
   font-family: var(--pa-font);
   color: var(--pa-text);
@@ -32,7 +35,7 @@
   border: 1px solid var(--pa-border);
   border-radius: var(--pa-radius);
   overflow: hidden;
-  box-shadow: 0 1px 2px rgba(16, 34, 47, .06), 0 12px 32px -12px rgba(16, 34, 47, .18);
+  box-shadow: 0 1px 2px rgba(4, 26, 69, .06), 0 12px 32px -12px rgba(4, 26, 69, .2);
   line-height: 1.5;
 }
 .pronomic-advisor *,
@@ -48,8 +51,9 @@
 
 /* ---- Header ------------------------------------------------------------ */
 .pa-head { background: var(--pa-ink); color: var(--pa-ink-text); padding: 18px 28px 20px; }
-.pa-head-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-.pa-eyebrow { font-family: var(--pa-font-display); font-weight: 600; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; }
+.pa-head-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.pa-eyebrow { display: flex; align-items: center; gap: 14px; font-weight: 400; font-size: .95rem; opacity: .9; }
+.pa-logo { height: 22px; width: auto; display: block; }
 .pa-step { font-size: .85rem; opacity: .75; font-variant-numeric: tabular-nums; }
 .pa-segments { display: flex; gap: 4px; padding: 0; list-style: none; margin: 0; }
 .pa-seg { flex: 1; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .16); transition: background .25s; }
@@ -63,7 +67,7 @@
 
 .pa-qnum { font-family: var(--pa-font-display); font-weight: 700; font-size: 3.25rem; line-height: 1; color: var(--pa-accent); font-variant-numeric: tabular-nums; }
 .pa-title {
-  font-family: var(--pa-font-display); font-weight: 600; font-size: clamp(1.6rem, 3.2vw, 2.15rem);
+  font-family: var(--pa-font-display); font-weight: 500; font-size: clamp(1.5rem, 3vw, 2rem);
   line-height: 1.15; color: var(--pa-text); text-wrap: balance; outline: none;
 }
 .pa-help { color: var(--pa-muted); max-width: 60ch; margin-bottom: 18px; }
@@ -80,12 +84,12 @@
   background: var(--pa-surface); border: 1.5px solid var(--pa-border); border-radius: var(--pa-radius-sm);
   transition: border-color .15s, background-color .15s, transform .15s, box-shadow .15s;
 }
-.pa-option:hover { border-color: var(--pa-brand); transform: translateY(-1px); box-shadow: 0 6px 16px -10px rgba(11, 74, 111, .5); }
-.pa-option:focus-visible { outline: 3px solid var(--pa-accent); outline-offset: 2px; }
-.pa-option.is-selected { border-color: var(--pa-brand); background: var(--pa-tint); box-shadow: inset 0 0 0 1px var(--pa-brand); }
+.pa-option:hover { border-color: var(--pa-brand); transform: translateY(-1px); box-shadow: 0 6px 16px -10px rgba(4, 26, 69, .45); }
+.pa-option:focus-visible { outline: 3px solid var(--pa-focus); outline-offset: 2px; }
+.pa-option.is-selected { border-color: var(--pa-accent); background: var(--pa-tint); box-shadow: inset 0 0 0 1px var(--pa-accent); }
 
 .pa-option-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.pa-option-label { font-weight: 600; line-height: 1.3; }
+.pa-option-label { font-weight: 500; line-height: 1.3; }
 .pa-option-hint { font-size: .86rem; color: var(--pa-muted); line-height: 1.35; }
 
 .pa-icon { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
@@ -108,44 +112,44 @@
 
 /* Multi-select checkbox */
 .pa-check { flex: none; width: 20px; height: 20px; border: 1.5px solid var(--pa-border); border-radius: 5px; position: relative; }
-.pa-option.is-selected .pa-check { background: var(--pa-brand); border-color: var(--pa-brand); }
+.pa-option.is-selected .pa-check { background: var(--pa-accent); border-color: var(--pa-accent); }
 .pa-option.is-selected .pa-check::after {
   content: ""; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px;
-  border: solid var(--pa-brand-text); border-width: 0 2px 2px 0; transform: rotate(45deg);
+  border: solid var(--pa-accent-text); border-width: 0 2px 2px 0; transform: rotate(45deg);
 }
 
 .pa-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 22px; }
 
 /* ---- Buttons & links ---------------------------------------------------- */
 .pa-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 12px 22px; border-radius: var(--pa-radius-sm);
-  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-align: center;
+  padding: 12px 26px; border-radius: 999px;
+  font: inherit; font-weight: 500; text-decoration: none; cursor: pointer;
   border: 1.5px solid transparent; transition: filter .15s, background-color .15s;
 }
-.pa-btn-primary { background: var(--pa-brand); border-color: var(--pa-brand); color: var(--pa-brand-text); }
-.pa-btn-primary:hover { filter: brightness(1.12); }
+.pa-btn-primary { background: var(--pa-accent); border-color: var(--pa-accent); color: var(--pa-accent-text); }
+.pa-btn-primary:hover { filter: brightness(1.06); }
 .pa-btn-secondary { background: transparent; border-color: var(--pa-border); color: var(--pa-text); }
 .pa-btn-secondary:hover { border-color: var(--pa-brand); }
 .pa-btn-accent { background: var(--pa-accent); border-color: var(--pa-accent); color: var(--pa-accent-text); }
 .pa-btn-accent:hover { filter: brightness(1.06); }
 .pa-btn:disabled { opacity: .4; cursor: not-allowed; filter: none; }
-.pa-btn:focus-visible, .pa-link:focus-visible, .pa-arrow-link:focus-visible, .pa-summary-btn:focus-visible { outline: 3px solid var(--pa-accent); outline-offset: 2px; }
+.pa-btn:focus-visible, .pa-link:focus-visible, .pa-arrow-link:focus-visible, .pa-summary-btn:focus-visible { outline: 3px solid var(--pa-focus); outline-offset: 2px; }
 
-.pa-link { background: none; border: 0; padding: 8px 0; font: inherit; font-weight: 600; color: var(--pa-brand); cursor: pointer; }
+.pa-link { background: none; border: 0; padding: 8px 0; font: inherit; font-weight: 500; color: var(--pa-link); cursor: pointer; }
 .pa-link:hover { text-decoration: underline; }
-.pa-arrow-link { margin-top: auto; padding-top: 4px; font-weight: 600; color: var(--pa-brand); text-decoration: none; }
+.pa-arrow-link { margin-top: auto; padding-top: 4px; font-weight: 500; color: var(--pa-link); text-decoration: none; }
 .pa-arrow-link:hover { text-decoration: underline; }
 
 /* ---- "Your lift" summary ----------------------------------------------- */
 .pa-summary { background: var(--pa-surface-alt); border-left: 1px solid var(--pa-border); padding: 28px 22px; display: flex; flex-direction: column; gap: 12px; }
-.pa-summary-title { font-family: var(--pa-font-display); font-weight: 600; font-size: 1.15rem; letter-spacing: .06em; text-transform: uppercase; }
+.pa-summary-title { font-family: var(--pa-font-display); font-weight: 500; font-size: 1.15rem; letter-spacing: .06em; text-transform: uppercase; }
 .pa-summary-list { display: flex; flex-direction: column; }
 .pa-summary-btn { display: block; width: 100%; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; border-radius: 6px; }
 .pa-summary-row { padding: 9px 8px; border-bottom: 1px solid var(--pa-border); border-radius: 6px; }
 .pa-summary-btn:hover .pa-summary-row { background: var(--pa-surface); }
 .pa-summary-row dt { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--pa-muted); display: flex; align-items: center; gap: 6px; }
-.pa-summary-row dd { font-weight: 600; font-size: .93rem; line-height: 1.35; }
+.pa-summary-row dd { font-weight: 500; font-size: .93rem; line-height: 1.35; }
 .pa-summary-row.is-current dt::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--pa-accent); }
 .pa-summary-btn:hover dd { color: var(--pa-brand); }
 
@@ -166,11 +170,11 @@
 .pa-best-visual img { width: 100%; height: 100%; object-fit: contain; }
 .pa-best-icon { width: 120px; height: 120px; stroke-width: 1.6; }
 .pa-best-body { padding: 24px 26px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.pa-best-name { font-family: var(--pa-font-display); font-weight: 600; font-size: 1.85rem; line-height: 1.1; color: var(--pa-brand); text-wrap: balance; }
+.pa-best-name { font-family: var(--pa-font-display); font-weight: 500; font-size: 1.85rem; line-height: 1.1; color: var(--pa-brand); text-wrap: balance; }
 
 .pa-advice { font-size: 1.05rem; max-width: 62ch; }
 .pa-tip { padding: 10px 14px; font-size: .93rem; background: var(--pa-surface-alt); border-radius: var(--pa-radius-sm); }
-.pa-tip a, .pa-notes a { color: var(--pa-brand); font-weight: 600; }
+.pa-tip a, .pa-notes a { color: var(--pa-link); font-weight: 500; }
 
 .pa-products { display: flex; flex-direction: column; gap: 8px; }
 .pa-products-title { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--pa-muted); }
@@ -181,14 +185,14 @@
   color: inherit; text-decoration: none; transition: border-color .15s;
 }
 .pa-products a:hover { border-color: var(--pa-brand); }
-.pa-products a:focus-visible { outline: 3px solid var(--pa-accent); outline-offset: 2px; }
-.pa-product-name { font-weight: 600; color: var(--pa-brand); }
+.pa-products a:focus-visible { outline: 3px solid var(--pa-focus); outline-offset: 2px; }
+.pa-product-name { font-weight: 500; color: var(--pa-link); }
 .pa-product-detail { font-size: .85rem; color: var(--pa-muted); line-height: 1.35; }
 .pa-app-link { margin-top: 18px; align-self: flex-start; }
 
 .pa-specs { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; list-style: none; }
 .pa-specs li {
-  font-size: .8rem; font-weight: 600; padding: 3px 10px; border-radius: 6px;
+  font-size: .8rem; font-weight: 500; padding: 3px 10px; border-radius: 6px;
   background: var(--pa-surface-alt); border: 1px solid var(--pa-border); font-variant-numeric: tabular-nums;
 }
 
@@ -202,13 +206,13 @@
 .pa-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
 
 .pa-alts { margin-top: 26px; display: flex; flex-direction: column; gap: 12px; }
-.pa-alts-title { font-family: var(--pa-font-display); font-weight: 600; font-size: 1.3rem; }
+.pa-alts-title { font-family: var(--pa-font-display); font-weight: 500; font-size: 1.3rem; }
 .pa-alts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
 .pa-alt { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; border: 1px solid var(--pa-border); border-radius: var(--pa-radius); min-width: 0; }
 .pa-alt-head { display: flex; align-items: center; gap: 14px; }
 .pa-alt-visual { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 10px; background: var(--pa-surface-alt); color: var(--pa-brand); }
 .pa-alt-icon { width: 38px; height: 38px; }
-.pa-alt-name { font-family: var(--pa-font-display); font-weight: 600; font-size: 1.3rem; line-height: 1.15; color: var(--pa-text); }
+.pa-alt-name { font-family: var(--pa-font-display); font-weight: 500; font-size: 1.3rem; line-height: 1.15; color: var(--pa-text); }
 .pa-alt .pa-summary-text { font-size: .93rem; color: var(--pa-muted); }
 
 .pa-notes { margin-top: 20px; padding: 14px 18px; background: var(--pa-surface-alt); border-radius: var(--pa-radius-sm); display: flex; flex-direction: column; gap: 4px; font-size: .94rem; }
@@ -219,7 +223,7 @@
   background: var(--pa-ink); color: var(--pa-ink-text);
 }
 .pa-cta-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 280px; }
-.pa-cta h3 { font-family: var(--pa-font-display); font-weight: 600; font-size: 1.45rem; }
+.pa-cta h3 { font-family: var(--pa-font-display); font-weight: 500; font-size: 1.45rem; }
 .pa-cta p { opacity: .85; }
 
 /* ---- Motion ------------------------------------------------------------- */

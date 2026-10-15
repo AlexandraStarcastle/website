@@ -27,6 +27,7 @@
  */
 window.PRONOMIC_ADVISOR_CONFIG = {
   title: "Lifting Advisor",
+  logo: "pronomic-logo.svg", // path to the logo as seen from the page; "" hides it
 
   contact: {
     // Where "Talk to an expert" goes. The visitor's answers are appended as

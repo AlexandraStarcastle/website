@@ -240,7 +240,10 @@
     function renderHeader(done) {
       return el("header", { class: "pa-head" }, [
         el("div", { class: "pa-head-row" }, [
-          el("p", { class: "pa-eyebrow" }, config.title || "Lifting Advisor"),
+          el("p", { class: "pa-eyebrow" }, [
+            config.logo ? el("img", { class: "pa-logo", src: config.logo, alt: "Pronomic" }) : null,
+            config.title || "Lifting Advisor",
+          ]),
           el("p", { class: "pa-step", "aria-live": "polite" },
             done ? "Our advice" : `Step ${state.step + 1} of ${total}`),
         ]),
