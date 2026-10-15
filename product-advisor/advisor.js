@@ -339,7 +339,11 @@
     function renderBest(r) {
       const p = r.product;
       const tip = p.loadTips && p.loadTips[state.answers.load];
+      const model = p.models && p.models[state.answers.weight];
       const builder = p.probldr && config.probldr;
+      const builderUrl = builder && builder.deepLink && model && model.probldrId
+        ? builder.configureUrl + model.probldrId
+        : builder && builder.url;
       return el("article", { class: "pa-best" }, [
         el("div", { class: "pa-best-visual" }, [
           p.image ? el("img", { src: p.image, alt: "" }) : icon(p.icon, "pa-best-icon"),
@@ -358,6 +362,9 @@
                 tip.url ? el("a", { href: tip.url }, "Read more") : null,
               ])
             : null,
+          model
+            ? el("p", { class: "pa-tip" }, [el("strong", null, "Good starting point: "), model.text])
+            : null,
           r.warnings.map((w) => el("p", { class: "pa-warning" }, w)),
           p.products && p.products.length
             ? el("div", { class: "pa-products" }, [
@@ -373,7 +380,7 @@
           el("div", { class: "pa-actions" }, [
             builder
               ? el("a", {
-                  class: "pa-btn pa-btn-accent", href: builder.url,
+                  class: "pa-btn pa-btn-accent", href: builderUrl,
                   onclick: () => emit("probldr_click", { product: p.id }),
                 }, builder.label)
               : productLink(r, 0, "pa-btn pa-btn-primary", "See the products"),

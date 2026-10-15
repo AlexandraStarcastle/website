@@ -38,6 +38,11 @@ window.PRONOMIC_ADVISOR_CONFIG = {
   probldr: {
     url: "https://probldr.pronomic.com/#/products",
     label: "Build your lifting trolley in ProBldr",
+    // When true, the button opens a new configuration for the suggested model
+    // (#/configurations/new/{productId}) instead of the model selector.
+    // verify: only switch on once the route works for visitors who are not logged in.
+    deepLink: false,
+    configureUrl: "https://probldr.pronomic.com/#/configurations/new/",
   },
 
   maxResults: 3,
@@ -157,8 +162,16 @@ window.PRONOMIC_ADVISOR_CONFIG = {
         components: { text: "Forks or a custom fixture hold components and tools.", url: "https://www.pronomic.com/applications/components-and-tools/handling-components-and-tools-with-lifting-trolleys" },
         sacks: { text: "See how Lift&Drive trolleys handle bags and sacks.", url: "https://www.pronomic.com/applications/bags-and-sacks/bags-and-sack-lifting-with-lifting-trolleys" },
       },
+      // Starting model per weight band. Ranges and ProBldr product ids are
+      // from ProBldr's model selector (filter "How heavy?").
+      models: {
+        w50: { text: "Lift&Drive 90PRX, 90E or 90IE, for loads up to 90 kg.", probldrId: 54 },
+        w125: { text: "Lift&Drive 130PRX for up to 130 kg, or 175PRX if you want more margin.", probldrId: 53 },
+        w325: { text: "Lift&Drive 175PRX, 225PRX or 325PRX, depending on your heaviest load (up to 325 kg).", probldrId: 51 },
+      },
       products: [
         { name: "Lift&Drive PRX", detail: "Electric, Li-ion battery. 90, 130, 175, 225 or 325 kg", url: "https://www.pronomic.com/products/lifting-trolleys" },
+        { name: "Lift&Drive E / IE", detail: "Compact trolleys for loads up to 90 kg", url: "https://www.pronomic.com/products/lifting-trolleys" },
       ],
     },
     {

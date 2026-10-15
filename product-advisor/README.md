@@ -52,6 +52,7 @@ To add a solution, copy an existing entry and adjust it. Then run the tests and 
 ## Before going live
 
 - [ ] Check the values marked `// verify` in `advisor-config.js`. Product links and the figures shown to visitors come from pronomic.com.
+- [ ] Decide on `probldr.deepLink`: when `true`, the ProBldr button opens a new configuration for the suggested trolley model instead of the model selector. Test the link while logged out first.
 - [ ] Set `contact.url` (contact form) or `contact.email` (opens an email with the answers pre-filled).
 - [ ] Add product images (`image` field).
 - [ ] Match the colours in `advisor.css` to the brand. The headings use Barlow Condensed (see `index.html` for the font link); set `--pa-font-display` to use the site's own display font instead.

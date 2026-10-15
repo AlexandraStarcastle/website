@@ -45,6 +45,13 @@ assert.ok(!top({ load: "boxes", weight: "w1000", movement: "around" }).includes(
 assert.ok(!top({ load: "components", movement: "line", needs: ["nofix"] }).includes("overhead-rail"), "no rails when nothing can be mounted");
 console.log("ok   hard constraints");
 
+// Every weight band a trolley can be recommended for has a starting model
+const trolley = config.solutions.find((x) => x.id === "lifting-trolley");
+for (const o of config.questions.find((q) => q.id === "weight").options) {
+  if (o.kg[0] < trolley.capacityKg[1]) assert.ok(trolley.models[o.value], `no trolley model hint for ${o.value}`);
+}
+console.log("ok   trolley model hints");
+
 // Every link points to pronomic.com
 for (const s of config.solutions) {
   for (const u of [s.url, ...(s.products || []).map((p) => p.url), ...Object.values(s.loadTips || {}).map((t) => t.url)]) {
