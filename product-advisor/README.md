@@ -1,6 +1,6 @@
 # Pronomic Lifting Advisor
 
-A short questionnaire for website visitors. It asks 8 questions about their lift and recommends the best-fitting lifting solutions, with a "Talk to an expert" button that passes their answers to sales.
+A short questionnaire for website visitors. It asks 5 simple questions about what they lift and gives plain-language advice on how to solve it: the type of solution, a tip for their load, which Pronomic products to look at, and the next step (ProBldr for lifting trolleys, otherwise "Talk to an expert"). It guides, it does not configure: detailed configuration happens in ProBldr or with sales.
 
 Plain HTML/CSS/JavaScript with no build step and no dependencies, so it can be embedded in any CMS page.
 
@@ -8,7 +8,7 @@ Plain HTML/CSS/JavaScript with no build step and no dependencies, so it can be e
 
 | File | What it is |
 | --- | --- |
-| `advisor-config.js` | **Questions and product catalogue. Edit this file.** |
+| `advisor-config.js` | **Questions, solutions, product links and tips. Edit this file.** |
 | `advisor.js` | Recommendation engine and UI. |
 | `advisor.css` | Styles. Brand colours and fonts are CSS variables at the top. |
 | `index.html` | Stand-alone demo page. Open it in a browser. |
@@ -26,29 +26,32 @@ Plain HTML/CSS/JavaScript with no build step and no dependencies, so it can be e
 
 ## Questions asked
 
-1. Type of load (boxes, rolls, panels, servers, drums, parts, other)
-2. Heaviest weight
-3. Load surface (vacuum-friendly, irregular, lifting eyes)
-4. Where the load goes (workstation, larger area, around the building, between floors)
-5. Lifting height
-6. How often
-7. Does it need turning or tilting
-8. Environment (hygiene, ATEX, low ceiling, narrow aisles)
+1. What do you need to lift? (boxes, sacks, rolls, panels, drums, components, wheels, servers, other)
+2. Roughly how heavy?
+3. Where does the load need to go? (one workstation, around the building, along a line, between floors, just a better working height)
+4. How often?
+5. Anything else? (turning/tilting, nothing can be mounted, hygiene)
+
+## Solutions it can recommend
+
+Mobile lifting trolley (Lift&Drive, with ProBldr link), server lifter, vacuum tube lifter (Easyhand, Vacuhand, Easycrane), jib crane with hoist and gripper (Mechcrane, MobiArm, Mobichain, hoists, grippers), overhead rail system (Mechrail), manipulator (Mechlift Pro), lifting table, goods lift.
 
 ## How recommendations are made
 
-Each product in `advisor-config.js` has:
+Each solution in `advisor-config.js` has:
 
 - `capacityKg`: products that can't take the chosen weight are dropped.
 - `exclude`: answers that rule the product out (e.g. cranes when there is a low ceiling).
 - `score`: points per answer. The highest total wins, and the top 3 are shown.
 - `reasons`: the "why this fits" bullets shown on the result card.
 
-To add a product, copy an existing entry and adjust it. Then run the tests and add a scenario for the new product.
+Each solution also has `advice` (the main text), `loadTips` (a tip per load type), `products` (product families with links) and `probldr` (show the ProBldr button).
+
+To add a solution, copy an existing entry and adjust it. Then run the tests and add a scenario for it.
 
 ## Before going live
 
-- [ ] Check the URLs and capacities marked `// verify` in `advisor-config.js` against the live product pages.
+- [ ] Check the values marked `// verify` in `advisor-config.js`. Product links and the figures shown to visitors come from pronomic.com.
 - [ ] Set `contact.url` (contact form) or `contact.email` (opens an email with the answers pre-filled).
 - [ ] Add product images (`image` field).
 - [ ] Match the colours in `advisor.css` to the brand. The headings use Barlow Condensed (see `index.html` for the font link); set `--pa-font-display` to use the site's own display font instead.
@@ -57,5 +60,5 @@ To add a product, copy an existing entry and adjust it. Then run the tests and a
 ## Analytics
 
 If Google Tag Manager is on the page, these events are pushed to `dataLayer`:
-`lifting_advisor_start`, `_complete`, `_results`, `_product_click`, `_contact_click` and `_restart`.
+`lifting_advisor_start`, `_complete`, `_results`, `_product_click`, `_probldr_click`, `_contact_click` and `_restart`.
 They are also dispatched as DOM events (`advisor:results` etc.) on the container.

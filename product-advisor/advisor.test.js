@@ -9,45 +9,48 @@ function top(answers) {
   return recommend(answers, config).results.map((r) => r.product.id);
 }
 
+const none = ["none"];
 const cases = [
-  ["cartons at a packing station, all day",
-    { load: "boxes", weight: "w35", surface: "smooth", movement: "station", height: "work", frequency: "constant", orientation: "no", environment: ["none"] },
-    "vacuum-tube-lifter"],
+  ["cartons lifted again and again at a packing station",
+    { load: "boxes", weight: "w50", movement: "station", frequency: "often", needs: none }, "vacuum-lifter"],
+  ["sacks palletised all day along a line",
+    { load: "sacks", weight: "w50", movement: "line", frequency: "often", needs: none }, "vacuum-lifter"],
+  ["rolls carried around the building",
+    { load: "rolls", weight: "w125", movement: "around", frequency: "rare", needs: none }, "lifting-trolley"],
+  ["boxes moved between shelves, nothing can be mounted",
+    { load: "boxes", weight: "w50", movement: "around", frequency: "often", needs: ["nofix"] }, "lifting-trolley"],
   ["servers in a data centre",
-    { load: "servers", weight: "w80", surface: "unsure", movement: "mobile", height: "shelf", frequency: "rare", orientation: "no", environment: ["narrow"] },
-    "server-lifter"],
-  ["rolls moved around the building",
-    { load: "rolls", weight: "w80", surface: "unsure", movement: "mobile", height: "work", frequency: "regular", orientation: "no", environment: ["none"] },
-    "lifting-trolley"],
-  ["rolls that need turning at a station",
-    { load: "rolls", weight: "w150", surface: "porous", movement: "station", height: "work", frequency: "regular", orientation: "rotate", environment: ["none"] },
-    "manipulator"],
-  ["heavy parts across the hall",
-    { load: "parts", weight: "w1000", surface: "eyes", movement: "area", height: "high", frequency: "regular", orientation: "no", environment: ["none"] },
-    "overhead-crane"],
-  ["goods up to a mezzanine",
-    { load: "boxes", weight: "w325", surface: "smooth", movement: "floors", height: "high", frequency: "regular", orientation: "no", environment: ["none"] },
-    "goods-lift"],
-  ["parts with lifting eyes at one station",
-    { load: "parts", weight: "w325", surface: "eyes", movement: "station", height: "shelf", frequency: "rare", orientation: "no", environment: ["none"] },
-    "jib-crane"],
+    { load: "servers", weight: "w125", movement: "around", frequency: "rare", needs: none }, "server-lifter"],
+  ["components at one station, now and then",
+    { load: "components", weight: "w125", movement: "station", frequency: "rare", needs: none }, "jib-crane"],
+  ["heavy wheels that need tilting",
+    { load: "wheels", weight: "w325", movement: "station", frequency: "often", needs: ["tilt"] }, "manipulator"],
+  ["heavy components along a production line",
+    { load: "components", weight: "w1000", movement: "line", frequency: "often", needs: none }, "overhead-rail"],
+  ["load just needs a better working height",
+    { load: "components", weight: "w1000", movement: "height", frequency: "rare", needs: none }, "lifting-table"],
+  ["goods to a mezzanine",
+    { load: "boxes", weight: "w325", movement: "floors", frequency: "often", needs: none }, "goods-lift"],
 ];
 
 let failed = 0;
 for (const [name, answers, expected] of cases) {
   const ids = top(answers);
-  try {
-    assert.strictEqual(ids[0], expected);
-    console.log(`ok   ${name} -> ${ids.join(", ")}`);
-  } catch (e) {
-    failed++;
-    console.log(`FAIL ${name}: expected ${expected}, got ${ids.join(", ")}`);
-  }
+  if (ids[0] === expected) console.log(`ok   ${name} -> ${ids.join(", ")}`);
+  else { failed++; console.log(`FAIL ${name}: expected ${expected}, got ${ids.join(", ")}`); }
 }
 
 // Hard constraints
-assert.ok(!top({ load: "boxes", weight: "w1000plus", movement: "mobile" }).includes("lifting-trolley"), "trolley must not exceed capacity");
-assert.ok(!top({ load: "boxes", movement: "station", environment: ["lowceiling"] }).includes("jib-crane"), "no cranes under low ceilings");
+assert.ok(!top({ load: "boxes", weight: "w1000", movement: "around" }).includes("lifting-trolley"), "trolley must not exceed 325 kg");
+assert.ok(!top({ load: "components", movement: "line", needs: ["nofix"] }).includes("overhead-rail"), "no rails when nothing can be mounted");
 console.log("ok   hard constraints");
+
+// Every link points to pronomic.com
+for (const s of config.solutions) {
+  for (const u of [s.url, ...(s.products || []).map((p) => p.url), ...Object.values(s.loadTips || {}).map((t) => t.url)]) {
+    assert.ok(/^https:\/\/(www|probldr)\.pronomic\.com\//.test(u), `${s.id}: unexpected link ${u}`);
+  }
+}
+console.log("ok   links");
 
 process.exit(failed ? 1 : 0);

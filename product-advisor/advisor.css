@@ -168,6 +168,24 @@
 .pa-best-body { padding: 24px 26px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .pa-best-name { font-family: var(--pa-font-display); font-weight: 600; font-size: 1.85rem; line-height: 1.1; color: var(--pa-brand); text-wrap: balance; }
 
+.pa-advice { font-size: 1.05rem; max-width: 62ch; }
+.pa-tip { padding: 10px 14px; font-size: .93rem; background: var(--pa-surface-alt); border-radius: var(--pa-radius-sm); }
+.pa-tip a, .pa-notes a { color: var(--pa-brand); font-weight: 600; }
+
+.pa-products { display: flex; flex-direction: column; gap: 8px; }
+.pa-products-title { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--pa-muted); }
+.pa-products ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; padding: 0; list-style: none; }
+.pa-products a {
+  display: flex; flex-direction: column; gap: 2px; height: 100%; padding: 10px 12px;
+  border: 1px solid var(--pa-border); border-radius: var(--pa-radius-sm);
+  color: inherit; text-decoration: none; transition: border-color .15s;
+}
+.pa-products a:hover { border-color: var(--pa-brand); }
+.pa-products a:focus-visible { outline: 3px solid var(--pa-accent); outline-offset: 2px; }
+.pa-product-name { font-weight: 600; color: var(--pa-brand); }
+.pa-product-detail { font-size: .85rem; color: var(--pa-muted); line-height: 1.35; }
+.pa-app-link { margin-top: 18px; align-self: flex-start; }
+
 .pa-specs { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; list-style: none; }
 .pa-specs li {
   font-size: .8rem; font-weight: 600; padding: 3px 10px; border-radius: 6px;

@@ -42,10 +42,10 @@
     if (weightOpt && weightOpt.kg && product.capacityKg) {
       const [loadMin, loadMax] = weightOpt.kg;
       const [, capMax] = product.capacityKg;
-      if (capMax < loadMin) return null;
+      if (capMax < loadMin || (loadMin > 0 && capMax <= loadMin)) return null;
       if (capMax < loadMax) {
         score -= 3;
-        warnings.push(`Covers loads up to ${capMax} kg. Check the model for your heaviest load.`);
+        warnings.push("Your heaviest loads may be above the standard range. Check the model with us.");
       } else {
         score += 2;
       }
@@ -71,7 +71,7 @@
   /** Rank all products for a set of answers. */
   function recommend(answers, config) {
     config = config || root.PRONOMIC_ADVISOR_CONFIG;
-    const ranked = config.products
+    const ranked = (config.solutions || config.products)
       .map((p) => scoreProduct(p, answers, config))
       .filter(Boolean)
       .sort((a, b) => b.score - a.score);
@@ -112,6 +112,8 @@
     servers: "M11 7h26v34H11zM11 18h26M11 29h26M16 12.5h8M16 23.5h8M16 34.5h8M31 12.5h1M31 23.5h1M31 34.5h1",
     drums: "M12 12a12 4 0 1 0 24 0a12 4 0 1 0-24 0M12 12v24a12 4 0 0 0 24 0V12M12 20a12 4 0 0 0 24 0M12 28a12 4 0 0 0 24 0",
     parts: "M24 6l15.6 9v18L24 42 8.4 33V15zM24 17a7 7 0 1 0 0 14a7 7 0 1 0 0-14z",
+    sacks: "M15 12c-3 6-5 14-4 26h26c1-12-1-20-4-26M15 12c3 1.5 15 1.5 18 0M18 8l3 4M30 8l-3 4M17 24h14",
+    wheels: "M24 6a18 18 0 1 0 0 36a18 18 0 1 0 0-36zM24 15a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM24 21a3 3 0 1 0 0 6a3 3 0 1 0 0-6z",
     other: "M24 7a17 17 0 1 0 0 34a17 17 0 1 0 0-34zM19 19a5 5 0 1 1 7 4.6c-1.3.6-2 1.6-2 3V28M24 33v.5",
     // Products
     "vacuum-tube-lifter": "M6 6h36M24 6v4M20 10h8v18h-8zM20 14h8M20 18h8M20 22h8M28 22h7M12 30h24v3H12zM10 33h28v9H10z",
@@ -240,7 +242,7 @@
         el("div", { class: "pa-head-row" }, [
           el("p", { class: "pa-eyebrow" }, config.title || "Lifting Advisor"),
           el("p", { class: "pa-step", "aria-live": "polite" },
-            done ? "Your recommendation" : `Step ${state.step + 1} of ${total}`),
+            done ? "Our advice" : `Step ${state.step + 1} of ${total}`),
         ]),
         el("ol", { class: "pa-segments", "aria-hidden": "true" },
           questions.map((q, i) =>
@@ -327,13 +329,6 @@
       ]);
     }
 
-    function specChips(p) {
-      const chips = [];
-      if (p.capacityKg) chips.push(`Up to ${p.capacityKg[1].toLocaleString("en")} kg`);
-      if (p.mobility) chips.push(p.mobility);
-      return el("ul", { class: "pa-specs" }, chips.map((c) => el("li", null, c)));
-    }
-
     function productLink(r, i, cls, text) {
       return el("a", {
         class: cls, href: r.product.url,
@@ -342,27 +337,53 @@
     }
 
     function renderBest(r) {
+      const p = r.product;
+      const tip = p.loadTips && p.loadTips[state.answers.load];
+      const builder = p.probldr && config.probldr;
       return el("article", { class: "pa-best" }, [
         el("div", { class: "pa-best-visual" }, [
-          r.product.image ? el("img", { src: r.product.image, alt: "" }) : icon(r.product.icon, "pa-best-icon"),
+          p.image ? el("img", { src: p.image, alt: "" }) : icon(p.icon, "pa-best-icon"),
         ]),
         el("div", { class: "pa-best-body" }, [
-          el("p", { class: "pa-fit pa-fit--best" }, "Best match"),
-          el("h3", { class: "pa-best-name" }, r.product.name),
-          el("p", { class: "pa-family" }, r.product.family),
-          el("p", { class: "pa-summary-text" }, r.product.summary),
-          specChips(r.product),
+          el("p", { class: "pa-fit pa-fit--best" }, "Our advice"),
+          el("h3", { class: "pa-best-name" }, p.name),
+          el("p", { class: "pa-advice" }, p.advice),
           r.reasons.length
             ? el("ul", { class: "pa-reasons" }, r.reasons.slice(0, 3).map((t) => el("li", null, t)))
             : null,
+          tip
+            ? el("p", { class: "pa-tip" }, [
+                el("strong", null, "Tip for your load: "),
+                tip.text + " ",
+                tip.url ? el("a", { href: tip.url }, "Read more") : null,
+              ])
+            : null,
           r.warnings.map((w) => el("p", { class: "pa-warning" }, w)),
+          p.products && p.products.length
+            ? el("div", { class: "pa-products" }, [
+                el("p", { class: "pa-products-title" }, "Products to look at"),
+                el("ul", null, p.products.map((x) =>
+                  el("li", null, el("a", {
+                    href: x.url,
+                    onclick: () => emit("product_click", { product: p.id, item: x.name, rank: 1 }),
+                  }, [el("span", { class: "pa-product-name" }, x.name), el("span", { class: "pa-product-detail" }, x.detail)]))
+                )),
+              ])
+            : null,
           el("div", { class: "pa-actions" }, [
-            productLink(r, 0, "pa-btn pa-btn-primary", "View product"),
-            el("a", {
-              class: "pa-btn pa-btn-secondary",
-              href: contactHref(config, state.answers, r.product),
-              onclick: () => emit("contact_click", { product: r.product.id }),
-            }, "Ask about this product"),
+            builder
+              ? el("a", {
+                  class: "pa-btn pa-btn-accent", href: builder.url,
+                  onclick: () => emit("probldr_click", { product: p.id }),
+                }, builder.label)
+              : productLink(r, 0, "pa-btn pa-btn-primary", "See the products"),
+            builder
+              ? productLink(r, 0, "pa-btn pa-btn-secondary", "See the products")
+              : el("a", {
+                  class: "pa-btn pa-btn-secondary",
+                  href: contactHref(config, state.answers, p),
+                  onclick: () => emit("contact_click", { product: p.id }),
+                }, "Ask an expert"),
           ]),
         ]),
       ]);
@@ -378,10 +399,8 @@
           ]),
         ]),
         el("p", { class: "pa-summary-text" }, r.product.summary),
-        specChips(r.product),
         r.reasons[0] ? el("ul", { class: "pa-reasons" }, el("li", null, r.reasons[0])) : null,
-        r.warnings.map((w) => el("p", { class: "pa-warning" }, w)),
-        productLink(r, i, "pa-arrow-link", "View product →"),
+        productLink(r, i, "pa-arrow-link", "Read more →"),
       ]);
     }
 
@@ -389,26 +408,29 @@
       const { results, notes } = recommend(state.answers, config);
       emit("results", { products: results.map((r) => r.product.id) });
       const topScore = results.length ? results[0].score : 0;
+      const apps = config.applications || {};
+      const app = apps[state.answers.load] || apps._default;
 
       return el("section", { class: "pa-main pa-enter" }, [
         el("h2", { class: "pa-title", tabindex: "-1" },
-          results.length ? "Recommended for your lift" : "Your lift needs a custom solution"),
+          results.length ? "Here's how we would solve your lift" : "Your lift needs a tailored solution"),
         el("p", { class: "pa-help" },
           results.length
             ? "Based on your answers. Click any of your answers to change it."
-            : "None of our standard products matched all your answers. Our application experts design custom lifting solutions every day."),
+            : "None of our standard solutions matches all your answers, but our application experts design tailored lifting solutions every day."),
         results.length ? renderBest(results[0]) : null,
         results.length > 1
           ? el("div", { class: "pa-alts" }, [
-              el("h3", { class: "pa-alts-title" }, "Also worth considering"),
+              el("h3", { class: "pa-alts-title" }, "Other ways to solve it"),
               el("div", { class: "pa-alts-grid" }, results.slice(1).map((r, i) => renderAlt(r, i + 1, topScore))),
             ])
           : null,
         notes.length ? el("div", { class: "pa-notes" }, notes.map((n) => el("p", null, n))) : null,
+        app ? el("a", { class: "pa-arrow-link pa-app-link", href: app.url }, `See more ways to lift ${app.label} →`) : null,
         el("div", { class: "pa-cta" }, [
           el("div", { class: "pa-cta-text" }, [
-            el("h3", null, "Not sure yet?"),
-            el("p", null, "Send us your answers and an application expert will confirm the right model and configuration."),
+            el("h3", null, "Want help with the details?"),
+            el("p", null, "Send us your answers. An application expert will suggest the right model, tool and set-up for your workplace."),
           ]),
           el("a", {
             class: "pa-btn pa-btn-accent",
