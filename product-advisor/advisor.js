@@ -263,16 +263,40 @@
             const vals = answerValues(state.answers, q.id);
             const labels = vals.map((v) => (findOption(config, q.id, v) || {}).label || v);
             const answered = vals.length > 0;
-            const row = el("div", { class: "pa-summary-row" + (i === state.step && !done ? " is-current" : "") }, [
+            const row = el("div", { class: "pa-summary-row" + (i === state.step && !done ? " is-current" : "") + (answered ? "" : " is-empty") }, [
               el("dt", null, q.short || q.title),
-              el("dd", null, answered ? labels.join(", ") : "–"),
+              el("dd", null, answered ? labels.join(", ") : "Not answered yet"),
             ]);
             return answered
               ? el("button", { type: "button", class: "pa-summary-btn", title: "Change this answer", onclick: () => goTo(i) }, row)
               : row;
           })
         ),
+        done ? null : renderRunning(),
         done ? el("button", { type: "button", class: "pa-link", onclick: restart }, "Start over") : null,
+      ]);
+    }
+
+    // Which solution types the answers so far still allow. Uses the same
+    // exclusions and capacity limits as the final recommendation.
+    function renderRunning() {
+      const all = config.solutions;
+      const live = all.filter((s) => scoreProduct(s, state.answers, config));
+      return el("div", { class: "pa-running" }, [
+        el("p", { class: "pa-running-title", "aria-live": "polite" }, [
+          el("strong", null, String(live.length)),
+          ` of ${all.length} solution types still fit`,
+        ]),
+        el("ul", { class: "pa-running-list" },
+          all.map((s) => {
+            const ok = live.includes(s);
+            return el("li", { class: "pa-running-item" + (ok ? "" : " is-out"), title: s.name }, [
+              icon(s.icon, "pa-running-icon"),
+              el("span", { class: "pa-running-name" }, s.name),
+              ok ? null : el("span", { class: "pa-sr" }, " (ruled out)"),
+            ]);
+          })
+        ),
       ]);
     }
 
@@ -291,6 +315,9 @@
           "div",
           {
             class: "pa-options" + (isScale ? " pa-options--scale" : hasIcons ? " pa-options--tiles" : ""),
+            // Pick a column count the options fill, so none sits alone in a row
+            style: hasIcons ? `--cols:${q.options.length % 3 === 0 ? 3 : 4}`
+              : isScale ? null : `--cols:${q.options.length % 2 === 0 ? 2 : 1}`,
             role: isMulti ? "group" : "radiogroup",
             "aria-label": q.title,
           },
@@ -348,25 +375,31 @@
         ? builder.configureUrl + model.probldrId
         : builder && builder.url;
       return el("article", { class: "pa-best" }, [
-        el("div", { class: "pa-best-visual" }, [
-          p.image ? el("img", { src: p.image, alt: "" }) : icon(p.icon, "pa-best-icon"),
+        el("div", { class: "pa-best-head" }, [
+          el("span", { class: "pa-best-visual" }, [
+            p.image ? el("img", { src: p.image, alt: "" }) : icon(p.icon, "pa-best-icon"),
+          ]),
+          el("div", { class: "pa-best-heading" }, [
+            el("p", { class: "pa-fit pa-fit--best" }, "Our advice"),
+            el("h3", { class: "pa-best-name" }, p.name),
+          ]),
         ]),
         el("div", { class: "pa-best-body" }, [
-          el("p", { class: "pa-fit pa-fit--best" }, "Our advice"),
-          el("h3", { class: "pa-best-name" }, p.name),
           el("p", { class: "pa-advice" }, p.advice),
           r.reasons.length
             ? el("ul", { class: "pa-reasons" }, r.reasons.slice(0, 3).map((t) => el("li", null, t)))
             : null,
-          tip
-            ? el("p", { class: "pa-tip" }, [
-                el("strong", null, "Tip for your load: "),
-                tip.text + " ",
-                tip.url ? el("a", { href: tip.url }, "Read more") : null,
+          tip || model
+            ? el("dl", { class: "pa-tips" }, [
+                tip ? el("div", { class: "pa-tip" }, [
+                  el("dt", null, "Tip for your load"),
+                  el("dd", null, [tip.text + " ", tip.url ? el("a", { href: tip.url }, "Read more") : null]),
+                ]) : null,
+                model ? el("div", { class: "pa-tip" }, [
+                  el("dt", null, "Good starting point"),
+                  el("dd", null, model.text),
+                ]) : null,
               ])
-            : null,
-          model
-            ? el("p", { class: "pa-tip" }, [el("strong", null, "Good starting point: "), model.text])
             : null,
           r.warnings.map((w) => el("p", { class: "pa-warning" }, w)),
           p.products && p.products.length
@@ -376,7 +409,11 @@
                   el("li", null, el("a", {
                     href: x.url,
                     onclick: () => emit("product_click", { product: p.id, item: x.name, rank: 1 }),
-                  }, [el("span", { class: "pa-product-name" }, x.name), el("span", { class: "pa-product-detail" }, x.detail)]))
+                  }, [
+                    el("span", { class: "pa-product-name" }, x.name),
+                    el("span", { class: "pa-product-detail" }, x.detail),
+                    el("span", { class: "pa-product-arrow", "aria-hidden": "true" }, "→"),
+                  ]))
                 )),
               ])
             : null,

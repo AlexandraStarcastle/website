@@ -33,6 +33,12 @@ Plain HTML/CSS/JavaScript with no build step and no dependencies, so it can be e
 4. How often?
 5. Anything else? (turning/tilting, nothing can be mounted, hygiene)
 
+## What the visitor sees
+
+- One question per step. Single-choice questions move on as soon as an option is picked.
+- A "Your lift" column with the answers so far (click one to change it) and the solution types those answers still allow. Ruled-out types are struck through, using the same rules as the final advice. On phones only that row of icons shows, below the question.
+- The advice: the best-fitting solution with why it fits, a tip for the load, a starting model where there is one, the products to look at, and up to two other ways to solve it.
+
 ## Solutions it can recommend
 
 Mobile lifting trolley (Lift&Drive, with ProBldr link), server lifter, vacuum tube lifter (Easyhand, Vacuhand, Easycrane), jib crane with hoist and gripper (Mechcrane, MobiArm, Mobichain, hoists, grippers), overhead rail system (Mechrail), manipulator (Mechlift Pro), lifting table, goods lift.
