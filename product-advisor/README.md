@@ -25,6 +25,11 @@ Plain HTML/CSS/JavaScript with no build step and no dependencies, so it can be e
 <script>PronomicAdvisor.mount("#pronomic-advisor");</script>
 ```
 
+## Pre-filled answers
+
+Answers can be handed over in the URL, for example from the site menu's guide:
+`?load=boxes&weight=w50&movement=station` (multi-select: `needs=tilt,nofix`). The advisor starts at the first unanswered question. Unknown values are ignored. You can also pass answers in code: `PronomicAdvisor.mount("#pronomic-advisor", null, { answers: { load: "rolls" } })`.
+
 ## Questions asked
 
 1. What do you need to lift? (boxes, sacks, rolls, panels, drums, components, wheels, servers, other)

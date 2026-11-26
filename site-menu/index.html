@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Site menu demo | Pronomic</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap">
+  <link rel="stylesheet" href="menu.css">
+  <style>
+    body { margin: 0; font-family: "Ubuntu", Arial, sans-serif; color: #041a45; background: #f2f3f6; }
+    .demo-hero { max-width: 1320px; margin: 0 auto; padding: 72px 24px; }
+    .demo-hero h1 { margin: 0 0 12px; font-weight: 500; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; max-width: 18ch; }
+    .demo-hero h1 span { color: #3bc14a; }
+    .demo-hero p { margin: 0; max-width: 60ch; color: #435373; font-size: 1.15rem; }
+    .demo-note { max-width: 1320px; margin: 0 auto; padding: 0 24px 64px; color: #435373; font-size: .9rem; }
+    .demo-blocks { max-width: 1320px; margin: 0 auto 48px; padding: 0 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .demo-blocks div { height: 180px; border-radius: 12px; background: #fff; border: 1px solid #d3d7df; }
+  </style>
+</head>
+<body>
+  <div id="pronomic-menu"></div>
+
+  <main>
+    <section class="demo-hero">
+      <h1>Lifting solutions <span>tailored to your load</span></h1>
+      <p>Demo page for the new site menu. Open "Find your solution" to try the guide, or resize the window to see the mobile menu.</p>
+    </section>
+    <div class="demo-blocks"><div></div><div></div><div></div></div>
+    <p class="demo-note">Placeholder content. Menu events are logged to the console.</p>
+  </main>
+
+  <!-- The Lifting Advisor engine powers the guide inside the menu -->
+  <script src="../product-advisor/advisor-config.js"></script>
+  <script src="../product-advisor/advisor.js"></script>
+  <script src="menu-config.js"></script>
+  <script src="menu.js"></script>
+  <script>
+    PronomicMenu.mount("#pronomic-menu");
+    // Demo only: show what would be sent to Google Tag Manager.
+    ["open", "click", "guide_answer", "guide_result", "guide_handoff", "search", "probldr_click"].forEach(function (n) {
+      document.addEventListener("menu:" + n, function (e) { console.log("menu:" + n, e.detail); });
+    });
+  </script>
+</body>
+</html>

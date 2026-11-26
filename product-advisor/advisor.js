@@ -180,14 +180,40 @@
     return score >= topScore * 0.6 ? "Good fit" : "Also possible";
   }
 
-  function mount(target, config) {
+  /**
+   * Answers handed over from elsewhere (e.g. the site menu's quick guide),
+   * read from the URL: ?load=boxes&weight=w50&movement=around&needs=tilt,nofix
+   * Unknown questions and values are ignored.
+   */
+  function answersFromUrl(config, search) {
+    const params = new URLSearchParams(search || "");
+    const answers = {};
+    for (const q of config.questions) {
+      const raw = params.get(q.id);
+      if (!raw) continue;
+      const valid = raw.split(",").filter((v) => q.options.some((o) => o.value === v));
+      if (!valid.length) continue;
+      answers[q.id] = q.type === "multi" ? valid : valid[0];
+    }
+    return answers;
+  }
+
+  function mount(target, config, options) {
     config = config || root.PRONOMIC_ADVISOR_CONFIG;
+    options = options || {};
     const host = typeof target === "string" ? document.querySelector(target) : target;
     if (!host) throw new Error("PronomicAdvisor: mount target not found");
 
-    const state = { step: 0, answers: {} };
     const questions = config.questions;
     const total = questions.length;
+    const prefill = Object.assign(
+      {},
+      options.readUrl === false ? {} : answersFromUrl(config, root.location && root.location.search),
+      options.answers || {}
+    );
+    // Start at the first question that still needs an answer.
+    const firstOpen = questions.findIndex((q) => !answerValues(prefill, q.id).length);
+    const state = { step: firstOpen === -1 ? total : firstOpen, answers: prefill };
 
     function emit(name, detail) {
       host.dispatchEvent(new CustomEvent("advisor:" + name, { detail, bubbles: true }));
@@ -471,12 +497,12 @@
       }
     }
 
-    emit("start", {});
+    emit("start", { prefilled: Object.keys(prefill) });
     render();
     return { restart, getAnswers: () => Object.assign({}, state.answers) };
   }
 
-  const api = { mount, recommend, scoreProduct, summarizeAnswers };
+  const api = { mount, recommend, scoreProduct, summarizeAnswers, answersFromUrl, icons: ICONS };
   root.PronomicAdvisor = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);
